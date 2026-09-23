@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorpresa Interactiva de Corazón</title>
+    <title>Sorpresa Interactiva de Aniversario</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,8 +11,8 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <!-- Google Fonts Nunito -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts Nunito & Dancing Script -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -23,13 +23,17 @@
             overflow-x: hidden;
         }
 
+        .font-handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* Animación de palpitación flotante cuando está en reposo */
+        /* Animación de palpitación flotante */
         .heart-idle {
             animation: heartPulse 2s ease-in-out infinite;
         }
@@ -39,32 +43,38 @@
             50% { transform: scale(calc(var(--current-scale, 1) * 1.05)); }
         }
 
-        /* Transición elástica fluida para el crecimiento */
         .elastic-heart {
             transition: transform 0.4s cubic-bezier(0.34, 1.75, 0.64, 1), filter 0.3s ease;
         }
 
-        /* Efecto al presionar directamente */
         .elastic-heart:active {
             transform: scale(calc(var(--current-scale, 1) * 0.92)) !important;
         }
 
-        /* Partícula flotante de corazón al hacer clic */
-        .floating-heart-particle {
+        /* Frases de aniversario flotantes sobre el corazón */
+        .floating-message-particle {
             position: absolute;
             pointer-events: none;
-            animation: floatUpFade 1.2s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-            z-index: 30;
+            white-space: nowrap;
+            animation: floatUpFadeMsg 2s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            z-index: 40;
         }
 
-        @keyframes floatUpFade {
+        @keyframes floatUpFadeMsg {
             0% {
+                opacity: 0;
+                transform: translate(-50%, 0) scale(0.7);
+            }
+            15% {
                 opacity: 1;
-                transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+                transform: translate(-50%, -20px) scale(1);
+            }
+            80% {
+                opacity: 1;
             }
             100% {
                 opacity: 0;
-                transform: translate(calc(-50% + var(--dx)), calc(-50% - 90px)) scale(1.4) rotate(var(--rot));
+                transform: translate(calc(-50% + var(--dx)), -110px) scale(1.05);
             }
         }
 
@@ -102,7 +112,6 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Explosión y desvanecimiento del corazón inicial */
         .heart-explode {
             animation: heartBurstOut 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
         }
@@ -112,9 +121,105 @@
             50% { transform: scale(calc(var(--current-scale, 1) * 1.6)); opacity: 0.8; filter: drop-shadow(0 0 40px #f43f5e); }
             100% { transform: scale(0); opacity: 0; }
         }
+
+        /* Estilos del Sobre Animado */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background-color: #f33a63;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .envelope:hover {
+            transform: translateY(-5px);
+        }
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 170px solid transparent;
+            border-right: 170px solid transparent;
+            border-top: 110px solid #e11d48;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out, z-index 0.6s ease;
+            z-index: 3;
+        }
+        @media (min-width: 640px) {
+            .envelope-flap {
+                border-left-width: 200px;
+                border-right-width: 200px;
+                border-top-width: 120px;
+            }
+        }
+        .envelope-pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 170px solid #fb7185;
+            border-right: 170px solid #f43f5e;
+            border-bottom: 100px solid #e11d48;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 2;
+        }
+        @media (min-width: 640px) {
+            .envelope-pocket {
+                border-left-width: 200px;
+                border-right-width: 200px;
+                border-bottom-width: 110px;
+            }
+        }
+        .letter {
+            position: absolute;
+            bottom: 10px;
+            left: 5%;
+            width: 90%;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            color: #333;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope.open + .letter-out {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
+
+    <!-- Reproductor de Música de Fondo -->
+    <audio id="bg-music" loop preload="auto">
+        <source id="music-source" src="cancion.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <!-- Botón flotante para controlar la música -->
+    <button id="music-control-btn" onclick="toggleMusic()" class="fixed top-4 right-4 z-50 bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white p-3 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center">
+        <span id="music-icon" class="text-xl">🎵</span>
+    </button>
 
     <!-- Luces y destellos decorativos de fondo -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -123,7 +228,7 @@
     </div>
 
     <!-- Contenedor cristal principal -->
-    <main class="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 p-6 md:p-8 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] text-center text-white">
+    <main class="relative z-10 w-full max-w-lg bg-white/10 backdrop-blur-2xl border border-white/20 p-6 md:p-8 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] text-center text-white my-8">
         
         <!-- SECCIÓN 1: CORAZÓN E INTERACCIÓN DE CLICS -->
         <section id="game-section" class="transition-all duration-500">
@@ -139,16 +244,15 @@
             <!-- Contenedor del Corazón / Botón -->
             <div id="heart-wrapper" class="relative w-full h-64 md:h-72 flex items-center justify-center mb-6 select-none">
                 
-                <!-- Resplandor dinamico detrás del corazón -->
+                <!-- Resplandor dinámico detrás del corazón -->
                 <div id="heart-glow" class="absolute w-44 h-44 bg-rose-500/40 rounded-full blur-2xl transition-all duration-300 pointer-events-none"></div>
 
-                <!-- Corazón Interactivo (SVG por defecto o Imagen) -->
+                <!-- Corazón Interactivo -->
                 <div 
                     id="interactive-heart" 
                     class="relative z-10 cursor-pointer elastic-heart heart-idle flex items-center justify-center"
                     style="--current-scale: 1;"
                 >
-                    <!-- SVG de Corazón estilizado -->
                     <svg 
                         id="svg-heart-icon" 
                         class="w-36 h-36 md:w-44 md:h-44 filter drop-shadow-[0_10px_25px_rgba(244,63,94,0.6)] transition-all duration-300 hover:drop-shadow-[0_15px_35px_rgba(244,63,94,0.9)]" 
@@ -171,7 +275,6 @@
                         />
                     </svg>
 
-                    <!-- Imagen alternativa si se activa en la CONFIGURACION -->
                     <img 
                         id="custom-heart-img" 
                         src="" 
@@ -202,36 +305,81 @@
         </section>
 
         <!-- SECCIÓN 2: MOSTRAR SORPRESA FINAL -->
-        <section id="surprise-section" class="hidden opacity-0">
-            <div class="inline-block px-4 py-1 bg-rose-500/30 border border-rose-400/40 rounded-full text-rose-200 font-black text-xs tracking-widest uppercase mb-3 shadow-lg">
-                ✨ ¡Sorpresa Revelada! ✨
+        <section id="surprise-section" class="hidden opacity-0 space-y-8">
+            <div class="inline-block px-4 py-1 bg-rose-500/30 border border-rose-400/40 rounded-full text-rose-200 font-black text-xs tracking-widest uppercase shadow-lg">
+                ✨ ¡Feliz Aniversario! ✨
             </div>
 
-            <h2 id="titulo-sorpresa" class="text-2xl md:text-3xl font-black text-white mb-4 drop-shadow-[0_2px_12px_rgba(244,63,94,0.6)]">
+            <h2 id="titulo-sorpresa" class="text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_12px_rgba(244,63,94,0.6)]">
                 <!-- Cargado JS -->
             </h2>
 
-            <div class="relative rounded-2xl overflow-hidden mb-5 shadow-[0_12px_35px_rgba(0,0,0,0.6)] border-2 border-white/30 group">
-                <img 
-                    id="surprise-image" 
-                    src="" 
-                    alt="Imagen de Sorpresa Final" 
-                    class="w-full h-64 md:h-80 object-cover rounded-2xl transform transition-transform duration-700 hover:scale-105"
-                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop';"
-                >
+            <!-- FOTO PRINCIPAL TIPO POLAROID -->
+            <div class="bg-white p-4 pb-8 rounded-sm shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 max-w-sm mx-auto">
+                <div class="relative overflow-hidden bg-gray-100 aspect-square">
+                    <img 
+                        id="surprise-image" 
+                        src="" 
+                        alt="Fotografía Principal" 
+                        class="w-full h-full object-cover"
+                        onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop';"
+                    >
+                </div>
+                <p id="polaroid-caption" class="text-gray-800 font-handwriting text-2xl mt-4 font-bold">Un día inolvidable juntos ❤️</p>
             </div>
 
-            <p id="mensaje-final" class="text-sm md:text-base text-rose-100 font-bold mb-6 leading-relaxed px-2">
-                <!-- Cargado JS -->
-            </p>
+            <!-- SOBRE DE CARTA INTERACTIVO -->
+            <div class="pt-4">
+                <p class="text-sm text-rose-200 mb-3 font-semibold animate-pulse">👇 Toca el sobre para abrir nuestra carta de aniversario</p>
+                <div class="envelope-wrapper max-w-xs sm:max-w-sm mx-auto">
+                    <div id="envelope-element" class="envelope flex items-center justify-center" onclick="openEnvelope()">
+                        <div class="envelope-flap"></div>
+                        <div class="envelope-pocket"></div>
+                        <span class="z-10 text-white font-bold text-sm bg-rose-700/60 px-3 py-1 rounded-full border border-white/30">📩 Abrir Carta</span>
+                    </div>
+                </div>
 
-            <button 
-                id="btn-reiniciar"
-                onclick="resetGame()" 
-                class="w-full py-3.5 px-6 bg-gradient-to-r from-rose-500 via-pink-600 to-purple-600 hover:from-rose-600 hover:to-purple-700 text-white font-extrabold rounded-xl shadow-lg hover:shadow-rose-500/30 transition-all duration-300 transform active:scale-95"
-            >
-                <!-- Cargado JS -->
-            </button>
+                <!-- CONTENIDO DE LA CARTA (Aparece al abrir) -->
+                <div id="letter-content" class="hidden mt-6 bg-amber-50/95 text-slate-800 p-6 rounded-2xl shadow-2xl border-2 border-amber-200 text-left transition-all duration-700">
+                    <div class="border-b border-amber-200/80 pb-3 mb-4 flex items-center justify-between">
+                        <span class="font-handwriting text-2xl text-rose-600 font-bold">Para el amor de mi vida...</span>
+                        <span class="text-xl">🥂✨</span>
+                    </div>
+                    <p id="mensaje-final" class="text-sm md:text-base leading-relaxed text-slate-700 font-medium whitespace-pre-line">
+                        <!-- Cargado JS -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- GALERÍA DE 3 FOTOS ADICIONALES -->
+            <div class="pt-8 border-t border-white/10">
+                <h3 class="text-lg font-bold text-rose-200 mb-6 flex items-center justify-center gap-2">
+                    📸 <span>Nuestra Historia en Fotos</span> 📸
+                </h3>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="bg-white p-3 pb-6 rounded-sm shadow-xl transform rotate-2 hover:rotate-0 transition-transform duration-300">
+                        <img id="galeria-foto-1" class="w-full h-56 object-cover rounded-sm" src="" alt="Recuerdo 1">
+                    </div>
+                    <div class="bg-white p-3 pb-6 rounded-sm shadow-xl transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+                        <img id="galeria-foto-2" class="w-full h-56 object-cover rounded-sm" src="" alt="Recuerdo 2">
+                    </div>
+                    <div class="bg-white p-3 pb-6 rounded-sm shadow-xl transform rotate-1 hover:rotate-0 transition-transform duration-300">
+                        <img id="galeria-foto-3" class="w-full h-56 object-cover rounded-sm" src="" alt="Recuerdo 3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÓN REINICIAR -->
+            <div class="pt-6">
+                <button 
+                    id="btn-reiniciar"
+                    onclick="resetGame()" 
+                    class="w-full py-3.5 px-6 bg-gradient-to-r from-rose-500 via-pink-600 to-purple-600 hover:from-rose-600 hover:to-purple-700 text-white font-extrabold rounded-xl shadow-lg hover:shadow-rose-500/30 transition-all duration-300 transform active:scale-95"
+                >
+                    <!-- Cargado JS -->
+                </button>
+            </div>
         </section>
 
     </main>
@@ -244,31 +392,59 @@
         */
 
         const CONFIGURACION = {
-            // --- 1. CONFIGURACIÓN DE CLICS Y CRECIMIENTO ---
-            TOTAL_CLICKS: 12,           // Clics necesarios para llegar al 100%
-            FACTOR_CRECIMIENTO: 0.75,   // Cuánto crece el corazón (0.75 significa que al final medirá 75% más)
+            // --- 1. MÚSICA DE FONDO ---
+            MUSICA_URL: "https://www.youtube.com/watch?v=-hoZpSoKAYE", 
 
-            // --- 2. IMÁGENES ---
-            // Si deseas usar una imagen propia para el botón en lugar del corazón SVG:
+            // --- 2. CONFIGURACIÓN DE CLICS Y CRECIMIENTO ---
+            TOTAL_CLICKS: 12,           
+            FACTOR_CRECIMIENTO: 0.75,   
+
+            // --- 3. FRASES DE ANIVERSARIO QUE APARECEN EN CADA CLIC ---
+            FRASES_ANIVERSARIO: [
+                "👩‍❤️‍👨 ¡Feliz Aniversario, mi amor!",
+                "✨ Gracias por cada día a tu lado",
+                "❤️ Eres lo mejor de mi vida",
+                "💖 ¡Por muchísimos años más juntos!",
+                "🌹 Cada segundo contigo vale la pena",
+                "🥂 Celebrando nuestro gran amor",
+                "✨ Mi lugar favorito siempre es a tu lado",
+                "🥰 Me vuelves a enamorar cada día",
+                "💑 Nuestra historia es mi favorita",
+                "💫 Contigo la vida es más bella",
+                "❤️ Te quiero con todo mi corazón",
+                "🎊 ¡Casi listo nuestro recuerdo!"
+            ],
+
+            // --- 4. IMÁGENES ---
             USAR_IMAGEN_EN_VEZ_DE_SVG: false, 
-            BOTON_IMAGEN_URL: "mi_corazon.png", // Nombre del archivo local o URL web
+            BOTON_IMAGEN_URL: "mi_corazon.png", 
 
-            // Imagen final de la sorpresa (puedes poner "mi_foto.jpg" o una URL de internet):
-            SORPRESA_IMAGEN_URL: "Mi_imagen.jpg", 
+            // Imagen Principal dentro del recuadro tipo Fotografía (Polaroid):
+            SORPRESA_IMAGEN_URL: "Foto1.jpg", 
 
-            // --- 3. TEXTOS Y MENSAJES ---
-            TITULO_INICIAL: "¡Tengo una sorpresa para ti!",
-            SUBTITULO_INICIAL: "Toca el corazón repetidamente para llenarlo de amor ❤️",
-            ETIQUETA_PROGRESO: "Amor enviado...",
+            // 3 Fotos para la galería que aparece al bajar:
+            GALERIA_FOTO_1: "Foto2.jpg",
+            GALERIA_FOTO_2: "Foto3.jpg",
+            GALERIA_FOTO_3: "Foto4.jpg",
 
-            TITULO_SORPRESA: "💖 ¡Para Ti Con Mucho Amor! 💖",
-            MENSAJE_FINAL: "¡Gracias por existir y llenar mis días de alegría! Espero que esta pequeña sorpresa te saque una hermosa sonrisa. ¡Eres una muy bella persona! ✨",
-            TEXTO_BOTON_REINICIAR: "🔄 Volver a intentar"
+            // --- 5. TEXTOS Y MENSAJES ---
+            TITULO_INICIAL: "¡Feliz Aniversario, Mi Amor!",
+            SUBTITULO_INICIAL: "Toca el corazón repetidamente para llenar nuestra historia de amor ❤️",
+            ETIQUETA_PROGRESO: "Construyendo recuerdos...",
+
+            TITULO_SORPRESA: "👩‍❤️‍👨 ¡Feliz Aniversario! 👩‍❤️‍👨",
+            TEXTO_POLAROID: "Siempre juntos ❤️",
+            
+            // Mensaje emotivo de la carta de aniversario:
+            MENSAJE_FINAL: "Hoy celebramos otro mes recorriendo este camino juntos.\n\nMirar atrás y ver todo lo que hemos construido, las risas compartidas, las metas alcanzadas y los momentos en los que nos hemos apoyado me demuestra que elegí al amor de mi vida. Gracias por tu ternura, por tu comprensión y por hacerme feliz cada día.\n\nEste es solo un capítulo más de la hermosa historia que seguiremos escribiendo. ¡Te quiero con toda mi alma! Happy Anniversary! 🥂💖✨",
+            
+            TEXTO_BOTON_REINICIAR: "🔄 Volver a revivir"
         };
 
         // --- ESTADO DE LA APLICACIÓN ---
         let currentClicks = 0;
         let isCompleted = false;
+        let isMusicPlaying = false;
 
         // Elementos DOM
         const heartElement = document.getElementById('interactive-heart');
@@ -281,6 +457,9 @@
         const gameSection = document.getElementById('game-section');
         const surpriseSection = document.getElementById('surprise-section');
         const surpriseImg = document.getElementById('surprise-image');
+        const bgMusic = document.getElementById('bg-music');
+        const musicSource = document.getElementById('music-source');
+        const musicIcon = document.getElementById('music-icon');
 
         // Carga inicial de textos y elementos
         function initApp() {
@@ -290,10 +469,25 @@
             document.getElementById('titulo-sorpresa').innerText = CONFIGURACION.TITULO_SORPRESA;
             document.getElementById('mensaje-final').innerText = CONFIGURACION.MENSAJE_FINAL;
             document.getElementById('btn-reiniciar').innerText = CONFIGURACION.TEXTO_BOTON_REINICIAR;
+            document.getElementById('polaroid-caption').innerText = CONFIGURACION.TEXTO_POLAROID;
 
             surpriseImg.src = CONFIGURACION.SORPRESA_IMAGEN_URL;
+            musicSource.src = CONFIGURACION.MUSICA_URL;
+            bgMusic.load();
 
-            // Configurar si se usa SVG o imagen personalizada para el botón
+            // Configurar Fotos Adicionales
+            const fallbackImg = 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop';
+            document.getElementById('galeria-foto-1').src = CONFIGURACION.GALERIA_FOTO_1;
+            document.getElementById('galeria-foto-2').src = CONFIGURACION.GALERIA_FOTO_2;
+            document.getElementById('galeria-foto-3').src = CONFIGURACION.GALERIA_FOTO_3;
+
+            document.querySelectorAll('#surprise-section img').forEach(img => {
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = fallbackImg;
+                };
+            });
+
             if (CONFIGURACION.USAR_IMAGEN_EN_VEZ_DE_SVG) {
                 svgHeartIcon.classList.add('hidden');
                 customHeartImg.classList.remove('hidden');
@@ -303,80 +497,107 @@
 
         initApp();
 
-        // Escuchador de clic/toque en el corazón
+        // Control de Música
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicIcon.innerText = "🔇";
+                isMusicPlaying = false;
+            } else {
+                bgMusic.play().then(() => {
+                    musicIcon.innerText = "🎵";
+                    isMusicPlaying = true;
+                }).catch(err => console.log("Error al reproducir audio:", err));
+            }
+        }
+
+        function startMusicAuto() {
+            if (!isMusicPlaying) {
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicIcon.innerText = "🎵";
+                }).catch(err => {
+                    console.log("Autoplay bloqueado por el navegador.");
+                });
+            }
+        }
+
+        // Clic en el corazón
         heartElement.addEventListener('click', function(e) {
             if (isCompleted) return;
 
+            startMusicAuto();
+
             currentClicks++;
 
-            // Calcular porcentaje (0 a 100)
             const progressRatio = Math.min(currentClicks / CONFIGURACION.TOTAL_CLICKS, 1);
             const percentage = Math.round(progressRatio * 100);
-
-            // Calcular nueva escala elástica progresiva
             const newScale = 1 + (progressRatio * CONFIGURACION.FACTOR_CRECIMIENTO);
             
-            // Actualizar la variable CSS de escala
             heartElement.style.setProperty('--current-scale', newScale);
 
-            // Intensificar el resplandor de fondo
             const glowScale = 1 + (progressRatio * 0.8);
             const glowOpacity = 0.4 + (progressRatio * 0.5);
             heartGlow.style.transform = `scale(${glowScale})`;
             heartGlow.style.opacity = glowOpacity;
 
-            // Actualizar barra de progreso
             progressFill.style.width = percentage + '%';
             percentageText.innerText = percentage + '%';
 
-            // Crear partícula de mini-corazón en la posición del clic
-            spawnFloatingHeart(e);
+            // Mostrar frase flotante emergente arriba del corazón
+            spawnFloatingMessage(e);
 
-            // Comprobar si se alcanzó la meta
             if (currentClicks >= CONFIGURACION.TOTAL_CLICKS) {
                 isCompleted = true;
                 setTimeout(triggerCompletion, 350);
             }
         });
 
-        // Generador de partículas flotantes de corazones
-        function spawnFloatingHeart(e) {
+        // Frases flotantes emergentes al presionar
+        function spawnFloatingMessage(e) {
             const rect = heartWrapper.getBoundingClientRect();
             
-            // Determinar origen del clic o centro
             const x = e.clientX ? (e.clientX - rect.left) : (rect.width / 2);
             const y = e.clientY ? (e.clientY - rect.top) : (rect.height / 2);
 
             const particle = document.createElement('div');
-            particle.className = 'floating-heart-particle text-rose-300 font-bold select-none';
-            particle.innerHTML = '❤️';
+            particle.className = 'floating-message-particle font-black text-amber-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] text-sm md:text-base select-none';
+            
+            // Seleccionar frase de aniversario correspondiente
+            const fraseIndex = (currentClicks - 1) % CONFIGURACION.FRASES_ANIVERSARIO.length;
+            particle.innerText = CONFIGURACION.FRASES_ANIVERSARIO[fraseIndex];
+
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;
 
-            // Direcciones aleatorias para esparcir
-            const dx = (Math.random() - 0.5) * 120;
-            const rot = (Math.random() - 0.5) * 60;
-            const size = Math.random() * 1.2 + 0.8;
-
+            const dx = (Math.random() - 0.5) * 80;
             particle.style.setProperty('--dx', `${dx}px`);
-            particle.style.setProperty('--rot', `${rot}deg`);
-            particle.style.fontSize = `${size}rem`;
 
             heartWrapper.appendChild(particle);
 
-            // Eliminar partícula al terminar la animación
             setTimeout(() => {
                 particle.remove();
-            }, 1200);
+            }, 2000);
         }
 
-        // Activación de evento final de victoria / revelación
+        // Abrir Carta
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope-element');
+            const letter = document.getElementById('letter-content');
+            
+            envelope.classList.add('open');
+            
+            setTimeout(() => {
+                letter.classList.remove('hidden');
+                letter.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 400);
+        }
+
+        // Revelar sorpresa final
         function triggerCompletion() {
-            // Animación de explosión/desvanecimiento del corazón
             heartElement.classList.remove('heart-idle');
             heartElement.classList.add('heart-explode');
 
-            // Lluvia de confeti
             lanzarConfeti();
 
             setTimeout(() => {
@@ -387,7 +608,7 @@
             }, 500);
         }
 
-        // Disparo de Confeti deslumbrante
+        // Confeti
         function lanzarConfeti() {
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
@@ -416,7 +637,7 @@
             }());
         }
 
-        // Reiniciar el estado
+        // Reiniciar
         function resetGame() {
             currentClicks = 0;
             isCompleted = false;
@@ -430,6 +651,11 @@
 
             progressFill.style.width = '0%';
             percentageText.innerText = '0%';
+
+            const envelope = document.getElementById('envelope-element');
+            const letter = document.getElementById('letter-content');
+            if (envelope) envelope.classList.remove('open');
+            if (letter) letter.classList.add('hidden');
 
             surpriseSection.classList.add('hidden');
             surpriseSection.classList.remove('surprise-entry');
